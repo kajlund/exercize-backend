@@ -1,7 +1,7 @@
 import pino from 'pino';
 
-const cnf = {
-  level: process.env.LOG_LEVEL || 'info',
+const defaultCnf = {
+  level: 'info',
   timestamp: pino.stdTimeFunctions.isoTime,
   formatters: {
     level: (label) => {
@@ -10,18 +10,22 @@ const cnf = {
   },
 }
 
-if (process.env.NODE_ENV !== 'production') {
-  cnf.transport = {
-    target: 'pino-pretty',
-    options: {
-      colorize: true,
-    },
-  };
-}
+export default function getLogger(appCnf, customLogCnf = {}) {
+  const logConfig = { ...defaultCnf, ...customLogCnf };
 
-export default function getLogger(customCnf = {}, stream) {
-  const logConfig = { ...cnf, ...customCnf };
-  const log = stream ? pino(stream) : pino(logConfig);
+  if (!appCnf) throw new Error('App config is required to setup logger');
+
+  // If a stream is provided, use it (for example in tests),
+  // otherwise pretty if unless in production mode
+  if (!customLogCnf.transport && !appCnf.isProd) {
+    logConfig.transport = {
+      target: 'pino-pretty',
+      options: {
+        colorize: true,
+      },
+    };
+  }
+  const log = pino(logConfig);
   log.debug(logConfig, 'Logger configured:');
   return log;
 }
