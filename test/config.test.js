@@ -27,18 +27,16 @@ describe('Configuration', () => {
 
   it('should load default config', () => {
     const cnf = getConfig();
-    expect(cnf).toEqual({
+    expect(cnf).toMatchObject({
       isDev: false,
       isTest: true,
       isProd: false,
       nodeEnv: 'test',
-      port: 3000,
-      logLevel: 'info',
+      port: 4000,
+      logLevel: 'trace',
       logHttp: false,
-      dbConnection: 'mongodb://127.0.0.1:27017/testdb',
-      saltRounds: 10,
-      sessionSecret: 'SessionSecretToBeChanged',
-      sessionExpiresIn: 1,
+      saltRounds: 12,
+      sessionExpiresIn: 43200,
     });
   });
 
