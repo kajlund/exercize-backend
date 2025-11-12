@@ -1,0 +1,53 @@
+@baseUrl = http://localhost:4000
+@activityId=68f90685b3a2cc203afc5872
+
+### Ping
+GET {{baseUrl}}/ping
+Accept: application/json
+
+### 404
+GET {{baseUrl}}/whatever
+Accept: application/json
+
+### Activities
+GET {{baseUrl}}/api/v1/activities HTTP/1.1
+Accept: application/json
+
+### Show activity
+GET {{baseUrl}}/api/v1/activities/{{activityId}} HTTP/1.1
+Accept: application/json
+
+### Add activity
+POST {{baseUrl}}/api/v1/activities/ HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "when": "2025-11-01",
+  "kind": "Strength Training",
+  "title": "Gymday focus on legs",
+  "description": "",
+  "distance": 0,
+  "duration": "01:04:30",
+  "elevation": 0
+}
+
+### Update activity
+PUT {{baseUrl}}/api/v1/activities/690621423e15fc15a8f635e3 HTTP/1.1
+Accept: application/json
+Content-Type: application/json
+
+{
+  "when": "2025-11-02",
+  "kind": "Strength Training",
+  "title": "Gymday focus on upper body",
+  "description": "Early morning gym",
+  "distance": 0,
+  "duration": "01:04:59",
+  "elevation": 0
+}
+
+### Delete activity
+DELETE {{baseUrl}}/api/v1/activities/690621423e15fc15a8f635e3 HTTP/1.1
+Accept: application/json
+Content-Type: application/json

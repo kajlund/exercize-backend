@@ -1,36 +1,54 @@
-import { describe, expect, beforeAll, afterAll, it } from 'vitest';
-import mongoose, { get } from 'mongoose';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import mongoose from 'mongoose';
 
-import initializeDatabase from '../src/db.js';
-import getConfig from '../src/config.js';
-import getLogger from '../src/logger.js';
+import { getDatabase } from '../src/db.js';
 
-let cnf = getConfig();
-let log = getLogger(cnf);
-let db;
+vi.mock('mongoose', () => ({
+  default: {
+    connect: vi.fn(),
+    disconnect: vi.fn(),
+  },
+}));
 
-describe('Database', () => {
-  beforeAll(() => {
+describe('getDatabase', () => {
+  const mockLog = {
+    info: vi.fn(),
+  };
+
+  const cnf = { dbConnection: 'mongodb://localhost:27017/test' };
+  const db = getDatabase(cnf, mockLog);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  afterAll(() => {
-    return db.disconnect();
-  });
+  it('should connect successfully and log info', async () => {
+    mongoose.connect.mockResolvedValueOnce(undefined);
 
-  it('should connect to the database', async () => {
-    db = initializeDatabase(cnf, log);
     await db.connect();
-    expect(mongoose.connection.readyState).toBe(1); // 1 = connected
-  }); // Increase timeout for DB connection
 
-  it('should throw an error for an invalid database URI', async () => {
-    // Temporarily set an invalid URI for this specific test
-    const originalUri = cnf.dbConnection;
-    cnf.dbConnection = 'mongodb://invalid:27017/testdb';
-    db = initializeDatabase(cnf, log);
-    // We expect the connectDB function to throw error
-    await expect(db.connect()).rejects.toThrow(/Database connection error/);
-    // Reset the URI for subsequent tests
-    cnf.dbConnection = originalUri;
-  }, 60000);
+    expect(mongoose.connect).toHaveBeenCalledWith(cnf.dbConnection);
+    expect(mockLog.info).toHaveBeenCalledWith('MongoDB connected');
+  });
+
+  it('should throw error on failed connect', async () => {
+    mongoose.connect.mockRejectedValueOnce(new Error('fail'));
+
+    await expect(db.connect()).rejects.toThrow('Database connection error: fail');
+  });
+
+  it('should disconnect successfully and log info', async () => {
+    mongoose.disconnect.mockResolvedValueOnce(undefined);
+
+    await db.disconnect();
+
+    expect(mongoose.disconnect).toHaveBeenCalled();
+    expect(mockLog.info).toHaveBeenCalledWith('MongoDB connection closed');
+  });
+
+  it('should throw error on failed disconnect', async () => {
+    mongoose.disconnect.mockRejectedValueOnce(new Error('fail'));
+
+    await expect(db.disconnect()).rejects.toThrow('Database disconnection error: fail');
+  });
 });

@@ -1,9 +1,6 @@
 import mongoose from 'mongoose';
 
-export default function initializeDatabase(cnf, log) {
-  if (!cnf) throw new Error('App config is required to initialize database');
-  if (!log) throw new Error('Logger is required to initialize database');
-
+export function getDatabase(cnf, log) {
   const db = {
     connect: async () => {
       try {
@@ -21,7 +18,6 @@ export default function initializeDatabase(cnf, log) {
         throw new Error(`Database disconnection error: ${err.message}`);
       }
     },
-  }
+  };
   return db;
 }
-

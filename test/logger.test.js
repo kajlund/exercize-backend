@@ -1,35 +1,44 @@
-import { describe, it, expect, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import pino from 'pino';
 
-import getConfig from '../src/config.js';
-import getLogger from '../src/logger.js';
+import { getLogger } from '../src/logger.js';
 
-describe('Logger', () => {
-  const cnf = getConfig();
+vi.mock('pino', () => ({
+  // pino is a default export that is a function
+  default: vi.fn(() => ({
+    // Return a simple object that looks like a logger
+    info: vi.fn(),
+    error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+  })),
+}));
 
-  it('should throw if no config is provided', () => {
-    expect(() => getLogger()).toThrow('App config is required to setup logger');
+describe('Logger module', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('should be able to log with default config', () => {
-    const log = getLogger(cnf);
-    const spy = vi.spyOn(log, 'info').mockImplementation((str) => str);
-    log.info('Info message');
-
-    expect(log).toBeDefined();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith('Info message');
-    spy.mockRestore();
+  it('creates a a logger without pino-pretty transport when isDev os false', () => {
+    const config = { logLevel: 'info', isDev: false };
+    const logger = getLogger(config);
+    expect(pino).toHaveBeenCalledWith({ level: 'info' });
+    expect(logger).toHaveProperty('info');
   });
 
-  it('should override default config', async () => {
-    const log = getLogger(cnf, { level: 'error' });
-    const spy = vi.spyOn(log, 'error').mockImplementation((str) => str);
-    log.error('Error message');
+  it('should pretty print when isDev is true', () => {
+    const config = { logLevel: 'debug', isDev: true };
 
-    expect(log).toBeDefined();
-    expect(spy).toBeCalledTimes(1);
-    expect(spy).toHaveBeenCalledWith('Error message');
-    expect(log.level).toEqual('error');
-    spy.mockRestore();
+    const logger = getLogger(config);
+
+    expect(pino).toHaveBeenCalledTimes(1);
+    expect(pino).toHaveBeenCalledWith({
+      level: 'debug',
+      transport: {
+        target: 'pino-pretty',
+        options: { colorize: true },
+      },
+    });
+    expect(logger).toHaveProperty('info'); // Check it returned our mock logger
   });
 });

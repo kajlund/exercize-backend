@@ -1,23 +1,8 @@
 import pino from 'pino';
 
-const defaultCnf = {
-  level: 'info',
-  timestamp: pino.stdTimeFunctions.isoTime,
-  formatters: {
-    level: (label) => {
-      return { level: label.toUpperCase() }
-    },
-  },
-}
-
-export default function getLogger(appCnf, customLogCnf = {}) {
-  const logConfig = { ...defaultCnf, ...customLogCnf };
-
-  if (!appCnf) throw new Error('App config is required to setup logger');
-
-  // If a stream is provided, use it (for example in tests),
-  // otherwise pretty if unless in production mode
-  if (!customLogCnf.transport && !appCnf.isProd) {
+export function getLogger(cnf) {
+  const logConfig = { level: cnf.logLevel };
+  if (cnf.isDev) {
     logConfig.transport = {
       target: 'pino-pretty',
       options: {
@@ -25,8 +10,5 @@ export default function getLogger(appCnf, customLogCnf = {}) {
       },
     };
   }
-  const log = pino(logConfig);
-  log.debug(logConfig, 'Logger configured:');
-  return log;
+  return pino(logConfig);
 }
-

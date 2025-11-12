@@ -1,32 +1,40 @@
-import path from 'node:path';
-
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
-import { Liquid } from 'liquidjs';
+import httpLogger from 'pino-http';
 
-import getRouter from './routes.js';
+import { getRouter } from './router.js';
+import { getErrorHandler } from './middleware/errorhandler.js';
+import { getNotFoundHandler } from './middleware/notfoundhandler.js';
 
-export default function getApp(cnf, log) {
-
+export function getApp(cnf, log) {
   const app = express();
 
-  // View engine config
-  const engine = new Liquid({
-    cache: cnf.isProd === true,
-    root: path.join(process.cwd(), 'views'),
-    layouts: path.join(process.cwd(), 'views/layouts'),
-    partials: path.join(process.cwd(), 'views/partials'),
-    extname: '.liquid'
-  });
+  // Add middleware
+  app.disable('x-powered-by');
+  app.set('trust proxy', 1); // trust first proxy
+  app.use(express.json({ limit: '1000kb' }));
+  app.use(cookieParser(cnf.cookieSecret));
+  app.use(
+    cors({
+      credentials: true,
+      exposedHeaders: ['set-cookie'],
+    }),
+  );
 
-  // Setup middleware
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: false }));
-  app.engine('liquid', engine.express());
-  app.set('view engine', 'liquid');
-  app.use(express.static(path.join(process.cwd(), 'public')));
+  // Logging Middleware
+  if (cnf.logHttp) {
+    app.use(httpLogger({ logger: log }));
+  }
 
   // Add routes
-  app.use(getRouter());
+  app.use(getRouter(log));
+
+  // Add 404 handler
+  app.use(getNotFoundHandler());
+
+  // Add Generic Error handler
+  app.use(getErrorHandler(log));
 
   return app;
 }
