@@ -1,23 +1,8 @@
-import mongoose from 'mongoose';
+import { drizzle } from 'drizzle-orm/node-postgres';
+import { getConfig } from './config.js';
 
-export function getDatabase(cnf, log) {
-  const db = {
-    connect: async () => {
-      try {
-        await mongoose.connect(cnf.dbConnection);
-        log.info('MongoDB connected');
-      } catch (err) {
-        throw new Error(`Database connection error: ${err.message}`);
-      }
-    },
-    disconnect: async () => {
-      try {
-        await mongoose.disconnect();
-        log.info('MongoDB connection closed');
-      } catch (err) {
-        throw new Error(`Database disconnection error: ${err.message}`);
-      }
-    },
-  };
-  return db;
-}
+const cnf = getConfig();
+
+const db = drizzle(cnf.dbConnection);
+
+export default db;

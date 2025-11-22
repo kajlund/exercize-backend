@@ -1,5 +1,3 @@
-import { kindsOfActivities } from './activity.utils.js';
-
 export const idSchema = {
   type: 'object',
   required: ['id'],
@@ -14,7 +12,7 @@ export const idSchema = {
 
 export const activitySchema = {
   type: 'object',
-  required: ['when', 'kind', 'title'],
+  required: ['when', 'kindId', 'title'],
   properties: {
     when: {
       type: 'string',
@@ -22,11 +20,11 @@ export const activitySchema = {
       description: 'Date of the activity',
       example: '2025-01-01',
     },
-    kind: {
+    kindId: {
       type: 'string',
-      enum: kindsOfActivities,
-      description: 'Activity category',
-      example: 'Walking',
+      format: 'uuid',
+      description: 'ActivityKind id',
+      example: '',
     },
     title: {
       type: 'string',

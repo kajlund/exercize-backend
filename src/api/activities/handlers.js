@@ -1,8 +1,8 @@
 import { codes } from '../../status.js';
-import { getActivityService } from './activity.service.js';
+import { getActivityServices } from './services.js';
 
-export function getActivityHandler(log) {
-  const svc = getActivityService(log);
+export function getActivityHandlers(log) {
+  const svc = getActivityServices(log);
   return {
     createActivity: async (req, res, next) => {
       const { body } = req;

@@ -1,16 +1,3 @@
-export const kindsOfActivities = [
-  'Badminton',
-  'Cycling',
-  'Other Activities',
-  'Outdoor Walking',
-  'Running',
-  'Strength Training',
-  'Swimming',
-  'Threadmill',
-  'Trailrunning',
-  'Trekking',
-];
-
 export const secToTimeStr = (sec) => {
   let sec_num = parseInt(sec, 10); // don't forget the second param
   let hours = Math.floor(sec_num / 3600);
