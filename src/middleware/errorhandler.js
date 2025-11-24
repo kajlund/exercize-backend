@@ -1,28 +1,17 @@
-import { ValidationError } from 'express-json-validator-middleware';
-
 import { codes, phrases } from '../status.js';
 
 export function getErrorHandler(log) {
   // eslint-disable-next-line no-unused-vars
   return (err, req, res, next) => {
-    // Check if the error is a validation error
-    if (err instanceof ValidationError) {
-      return res.status(codes.BAD_REQUEST).json({
-        success: false,
-        statusCode: codes.BAD_REQUEST,
-        message: phrases.BAD_REQUEST,
-        detail: 'Data validation error',
-        errors: err.validationErrors,
-      });
-    }
-
     if (err.isAppError) {
-      return res.status(err.statusCode).json({
+      const error = {
         success: false,
         statusCode: err.statusCode,
         message: err.message,
         detail: err.detail,
-      });
+      };
+      if (err.errors) error.errors = err.errors;
+      return res.status(err.statusCode).json(error);
     }
 
     // Generic error

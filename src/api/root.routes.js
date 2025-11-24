@@ -9,14 +9,7 @@ export function getRootRoutes() {
         method: 'get',
         path: '/ping',
         middleware: [],
-        handler: (_req, res) => {
-          res.status(200).json({
-            success: true,
-            status: 200,
-            message: 'OK',
-            data: { response: 'pong' },
-          });
-        },
+        handler: (_req, res) => res.status(200).send('pong'),
       },
     ],
   };

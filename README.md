@@ -10,3 +10,9 @@ REST API server for the sportz app implemented using Node.js/express, Drizzle OR
 - Apply migrations: `npx drizzle-kit migrate` 
 
 
+### Resources
+- [Express](https://expressjs.com/)
+- [Zod](https://zod.dev/)
+- [Drizzle ORM](https://orm.drizzle.team/)
+- [Node Postgres](https://node-postgres.com/)
+- 

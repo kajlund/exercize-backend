@@ -1,20 +1,14 @@
-import Ajv from 'ajv';
+import { z } from 'zod';
 
-const configSchema = {
-  type: 'object',
-  properties: {
-    env: { type: 'string', enum: ['development', 'production', 'test'] },
-    port: { type: 'integer', minimum: 80, maximum: 65535 },
-    logLevel: { type: 'string', enum: ['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent'] },
-    logHttp: { type: 'boolean' },
-    dbConnection: { type: 'string' },
-    cookieSecret: { type: 'string' },
-    saltRounds: { type: 'number', minimum: 10, maximum: 20 },
-    sessionSecret: { type: 'string' },
-    sessionExpiresIn: { type: 'integer', minimum: 1000, maximum: 65535 },
-  },
-  additionalProperties: false,
-};
+const configSchema = z.strictObject({
+  env: z.enum(['development', 'production', 'test']),
+  port: z.number().int().positive().gte(80).lte(65000),
+  logLevel: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']),
+  logHttp: z.boolean(),
+  dbConnection: z.string().trim(),
+  cookieSecret: z.string().min(30),
+  saltRounds: z.number().int().positive().gte(10).lte(20),
+});
 
 function getDefaultConfig() {
   return {
@@ -25,20 +19,13 @@ function getDefaultConfig() {
     dbConnection: process.env.DB_CONNECTION,
     cookieSecret: process.env.COOKIE_SECRET,
     saltRounds: parseInt(process.env.SALT_ROUNDS) || 10,
-    sessionSecret: process.env.SESSION_SECRET,
-    sessionExpiresIn: parseInt(process.env.SESSION_EXPIRES_IN) || 60000,
   };
 }
 
 export function getConfig(config = {}) {
   const cnf = { ...getDefaultConfig(), ...config };
-  const ajv = new Ajv({ allErrors: true, useDefaults: true });
-  const validate = ajv.compile(configSchema);
-  const valid = validate(cnf);
-  if (!valid) {
-    const errors = validate.errors.map((err) => `${err.instancePath} ${err.message}`).join(', ');
-    throw new Error(`Configuration validation error: ${errors}`);
-  }
+  configSchema.parse(cnf);
   cnf.isDev = cnf.env === 'development';
+
   return cnf;
 }

@@ -1,14 +1,16 @@
-import { codes } from '../../status.js';
+import { InternalServerError, NotFoundError } from '../../errors.js';
 import { getActivityKindServices } from './services.js';
+import { codes } from '../../status.js';
 
 export function getActivityKindHandlers(log) {
   const svc = getActivityKindServices(log);
-
   return {
     createActivityKind: async (req, res, next) => {
       const { body } = req;
       try {
         const activity = await svc.createActivityKind(body);
+        if (!activity) throw new InternalServerError('ActivityKind could not be created');
+
         res.status(codes.OK).json({
           success: true,
           status: codes.OK,
@@ -24,6 +26,8 @@ export function getActivityKindHandlers(log) {
       const { id } = req.params;
       try {
         const activity = await svc.deleteActivityKind(id);
+        if (!activity) throw new NotFoundError(`ActivityKind with id ${id} was not found`);
+
         return res.status(codes.OK).json({
           success: true,
           status: codes.OK,
@@ -39,6 +43,8 @@ export function getActivityKindHandlers(log) {
       const { id } = req.params;
       try {
         const activity = await svc.getActivityKindById(id);
+        if (!activity) throw new NotFoundError(`ActivityKind with id ${id} was not found`);
+
         return res.status(codes.OK).json({
           success: true,
           status: codes.OK,
@@ -67,8 +73,11 @@ export function getActivityKindHandlers(log) {
         params: { id },
         body,
       } = req;
+
       try {
         const activity = await svc.updateActivity(id, body);
+        if (!activity) throw new NotFoundError(`ActivityKind with id ${id} not found`);
+
         return res.status(codes.OK).json({
           success: true,
           status: codes.OK,

@@ -2,7 +2,6 @@ import { eq } from 'drizzle-orm';
 
 import db from '../../db.js';
 import kinds from './model.js';
-import { NotFoundError } from '../../errors.js';
 
 export function getActivityKindServices(log) {
   return {
@@ -13,12 +12,11 @@ export function getActivityKindServices(log) {
     },
     deleteActivityKind: async (id) => {
       const [data] = await db.delete(kinds).where(eq(kinds.id, id)).returning();
-      if (!data) throw new NotFoundError(`ActivityKind with id ${id} was not found`);
+      log.debug(data, `Deleted ActivityKind id: ${id}`);
       return data;
     },
     getActivityKindById: async (id) => {
       const [data] = await db.select().from(kinds).where(eq(kinds.id, id)).limit(1);
-      if (!data) throw new NotFoundError(`ActivityKind with id ${id} was not found`);
       log.debug(data, `Get ActivityKind by id: ${id}`);
       return data;
     },
@@ -29,8 +27,7 @@ export function getActivityKindServices(log) {
     },
     updateActivity: async (id, payload) => {
       log.debug(payload, `Updating ActivityKind ${id}`);
-      const data = await db.update(kinds).set(payload).where(eq(kinds.id, id)).returning();
-      if (!data) throw new NotFoundError(`ActivityKind with id ${id} not found`);
+      const [data] = await db.update(kinds).set(payload).where(eq(kinds.id, id)).returning();
       return data;
     },
   };

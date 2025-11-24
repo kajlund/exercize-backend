@@ -26,7 +26,7 @@ export function getActivityServices(log) {
   return {
     createActivity: async (payload) => {
       const [kind] = await db.select().from(activityKind).where(eq(activityKind.id, payload.kindId)).limit(1);
-      if (!kind) throw new BadRequestError(`Activitykind ${payload.kindId} was not found`);
+      if (!kind) throw new BadRequestError(`ActivityKind ${payload.kindId} was not found`);
       payload.duration = timeStrToSec(payload.duration);
       const [data] = await db.insert(activity).values(payload).returning();
       log.debug(data, 'Created activity');

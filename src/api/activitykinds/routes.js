@@ -1,9 +1,7 @@
-import { getValidator } from '../../middleware/validator.js';
-import { idSchema, activityKindSchema } from './schemas.js';
 import { getActivityKindHandlers } from './handlers.js';
+import { validateUUIDParam, validateActivityKindBody } from '../../middleware/validators.js';
 
 export function getActivityKindRoutes(log) {
-  const validate = getValidator();
   const hnd = getActivityKindHandlers(log);
 
   return {
@@ -21,25 +19,25 @@ export function getActivityKindRoutes(log) {
       {
         method: 'get',
         path: '/:id',
-        middleware: [validate({ params: idSchema })],
+        middleware: [validateUUIDParam],
         handler: hnd.getActivityKindById,
       },
       {
         method: 'post',
         path: '/',
-        middleware: [validate({ body: activityKindSchema })],
+        middleware: [validateActivityKindBody],
         handler: hnd.createActivityKind,
       },
       {
         method: 'put',
         path: '/:id',
-        middleware: [validate({ params: idSchema, body: activityKindSchema })],
+        middleware: [validateUUIDParam, validateActivityKindBody],
         handler: hnd.updateActivityKind,
       },
       {
         method: 'delete',
         path: '/:id',
-        middleware: [validate({ params: idSchema })],
+        middleware: [validateUUIDParam],
         handler: hnd.deleteActivityKind,
       },
     ],
