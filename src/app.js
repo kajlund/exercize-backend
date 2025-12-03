@@ -3,7 +3,7 @@ import cors from 'cors';
 import express from 'express';
 import httpLogger from 'pino-http';
 
-import { getRouter } from './router.js';
+import { getRouter } from './routes/index.js';
 import { getErrorHandler } from './middleware/errorhandler.js';
 import { getNotFoundHandler } from './middleware/notfoundhandler.js';
 
@@ -13,7 +13,7 @@ export function getApp(cnf, log) {
   // Add middleware
   app.disable('x-powered-by');
   app.set('trust proxy', 1); // trust first proxy
-  app.use(express.json({ limit: '1000kb' }));
+  app.use(express.json({ limit: '100kb' }));
   app.use(cookieParser(cnf.cookieSecret));
   app.use(
     cors({
@@ -28,7 +28,7 @@ export function getApp(cnf, log) {
   }
 
   // Add routes
-  app.use(getRouter(log));
+  app.use(getRouter(cnf, log));
 
   // Add 404 handler
   app.use(getNotFoundHandler());

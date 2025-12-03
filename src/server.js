@@ -1,7 +1,7 @@
 import { createServer } from 'node:http';
 
-import { getConfig } from './config.js';
-import { getLogger } from './logger.js';
+import { getConfig } from './utils/config.js';
+import { getLogger } from './utils/logger.js';
 import { getApp } from './app.js';
 
 export async function startServer() {

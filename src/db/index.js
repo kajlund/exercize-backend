@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
-import { getConfig } from './config.js';
+import { getConfig } from '../utils/config.js';
 
 const cnf = getConfig();
 

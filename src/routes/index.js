@@ -1,13 +1,13 @@
 import express from 'express';
 
-import { getRootRoutes } from './api/root.routes.js';
-import { getActivityKindRoutes } from './api/activitykinds/routes.js';
-import { getActivityRoutes } from './api/activities/routes.js';
+import { getRootRoutes } from './root.routes.js';
+import { getActivityKindRoutes } from './activitykind.routes.js';
+import { getActivityRoutes } from './activity.routes.js';
 
-export function getRouter(log) {
+export function getRouter(cnf, log) {
   const rootRoutes = getRootRoutes();
-  const activityRoutes = getActivityRoutes(log);
-  const activityKindRoutes = getActivityKindRoutes(log);
+  const activityRoutes = getActivityRoutes(cnf, log);
+  const activityKindRoutes = getActivityKindRoutes(cnf, log);
   const groups = [rootRoutes, activityRoutes, activityKindRoutes];
   const router = express.Router();
 

@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 const configSchema = z.strictObject({
-  env: z.enum(['development', 'production', 'test']),
+  env: z.enum(['development', 'production', 'test']).optional(),
   port: z.number().int().positive().gte(80).lte(65000),
-  logLevel: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']),
-  logHttp: z.boolean(),
+  logLevel: z.enum(['trace', 'debug', 'info', 'warn', 'error', 'fatal', 'silent']).optional(),
+  logHttp: z.boolean().optional(),
   dbConnection: z.string().trim(),
   cookieSecret: z.string().min(30),
-  saltRounds: z.number().int().positive().gte(10).lte(20),
+  corsOrigin: z.array(z.string()).optional(),
 });
 
 function getDefaultConfig() {
@@ -18,7 +18,7 @@ function getDefaultConfig() {
     logHttp: process.env.LOG_HTTP === '1',
     dbConnection: process.env.DB_CONNECTION,
     cookieSecret: process.env.COOKIE_SECRET,
-    saltRounds: parseInt(process.env.SALT_ROUNDS) || 10,
+    corsOrigin: parseInt(process.env.CORS_ORIGIN) || process.env.CORS_ORIGIN?.split(',') || ['http://localhost:5173'],
   };
 }
 

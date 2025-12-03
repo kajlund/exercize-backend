@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "node --watch --env-file=.env.development ./src/index.js",
     "start": "node ./src/index.js",
-    "test": "vitest run"
+    "test": "vitest run",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
   },
   "keywords": [],
   "author": "Kaj Lund",

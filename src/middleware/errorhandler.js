@@ -1,16 +1,18 @@
-import { codes, phrases } from '../status.js';
+import { codes, phrases } from '../utils/status.js';
 
 export function getErrorHandler(log) {
   // eslint-disable-next-line no-unused-vars
   return (err, req, res, next) => {
-    if (err.isAppError) {
+    if (err.isApiError) {
       const error = {
         success: false,
         statusCode: err.statusCode,
         message: err.message,
         detail: err.detail,
       };
-      if (err.errors) error.errors = err.errors;
+      if (err.errors && err.errors.name === 'ZodError') {
+        error.errors = err.errors?.issues;
+      }
       return res.status(err.statusCode).json(error);
     }
 
