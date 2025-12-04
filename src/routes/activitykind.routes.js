@@ -1,5 +1,8 @@
 import { getActivityKindsController } from '../controllers/activitykind.controllers.js';
-import { validateBody, validateIdParam } from '../middleware/validation.middleware.js';
+import {
+  validateBody,
+  validateIdParam,
+} from '../middleware/validation.middleware.js';
 
 import { newActivityKindSchema } from '../schemas/activitykind.schemas.js';
 

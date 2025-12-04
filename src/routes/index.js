@@ -14,7 +14,11 @@ export function getRouter(cnf, log) {
   groups.forEach(({ group, routes }) => {
     routes.forEach(({ method, path, middleware = [], handler }) => {
       log.info(`Route: ${method} ${group.prefix}${path}`);
-      router[method](group.prefix + path, [...(group.middleware || []), ...middleware], handler);
+      router[method](
+        group.prefix + path,
+        [...(group.middleware || []), ...middleware],
+        handler,
+      );
     });
   });
 

@@ -18,5 +18,9 @@ export const secToTimeStr = (sec) => {
 
 export const timeStrToSec = (timeStr) => {
   const durationParts = timeStr.split(':').map((part) => parseInt(part, 10));
-  return (durationParts[0] || 0) * 3600 + (durationParts[1] || 0) * 60 + (durationParts[2] || 0);
+  return (
+    (durationParts[0] || 0) * 3600 +
+    (durationParts[1] || 0) * 60 +
+    (durationParts[2] || 0)
+  );
 };

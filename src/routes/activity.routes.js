@@ -1,5 +1,8 @@
 import { getActivitiesController } from '../controllers/activity.controller.js';
-import { validateBody, validateIdParam } from '../middleware/validation.middleware.js';
+import {
+  validateBody,
+  validateIdParam,
+} from '../middleware/validation.middleware.js';
 import { newActivitySchema } from '../schemas/activity.schemas.js';
 
 export function getActivityRoutes(cnf, log) {

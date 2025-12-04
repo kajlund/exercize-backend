@@ -1,9 +1,23 @@
-import { boolean, date, integer, numeric, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import {
+  boolean,
+  date,
+  integer,
+  numeric,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from 'drizzle-orm/pg-core';
 // import { sql } from 'drizzle-orm';
 
 const timestamps = {
-  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
-  updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'string' }).notNull().defaultNow(),
+  createdAt: timestamp('createdAt', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
+  updatedAt: timestamp('updatedAt', { withTimezone: true, mode: 'string' })
+    .notNull()
+    .defaultNow(),
 };
 
 export const kinds = pgTable('ActivityKinds', {

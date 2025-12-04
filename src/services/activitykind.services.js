@@ -7,17 +7,22 @@ export function getActivityKindsService(cnf, log) {
   return {
     createActivityKind: async (payload) => {
       const created = await dao.insert(payload);
-      if (!created) throw new InternalServerError('Failed trying to create activitykind');
+      if (!created)
+        throw new InternalServerError('Failed trying to create activitykind');
       return created;
     },
     deleteActivityKind: async (id) => {
       const deleted = await dao.destroy(id);
-      if (!deleted) throw new InternalServerError(`Failed trying to delete activitykind with id ${id}`);
+      if (!deleted)
+        throw new InternalServerError(
+          `Failed trying to delete activitykind with id ${id}`,
+        );
       return deleted;
     },
     getActivityKindById: async (id) => {
       const found = await dao.findById(id);
-      if (!found) throw new NotFoundError(`Activitykind with id ${id} was not found`);
+      if (!found)
+        throw new NotFoundError(`Activitykind with id ${id} was not found`);
       return found;
     },
     queryActivityKinds: async (filter) => {
@@ -27,7 +32,10 @@ export function getActivityKindsService(cnf, log) {
     },
     updateActivityKind: async (id, payload) => {
       const updated = await dao.update(id, payload);
-      if (!updated) throw new InternalServerError(`Failed trying to update activitykind with id ${id}`);
+      if (!updated)
+        throw new InternalServerError(
+          `Failed trying to update activitykind with id ${id}`,
+        );
       return updated;
     },
   };

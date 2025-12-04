@@ -6,12 +6,19 @@ import { kinds } from './schemas.js';
 export function getActivityKindsDAO(log) {
   return {
     destroy: async function (id) {
-      const [deleted] = await db.delete(kinds).where(eq(kinds.id, id)).returning();
+      const [deleted] = await db
+        .delete(kinds)
+        .where(eq(kinds.id, id))
+        .returning();
       log.debug(deleted, `Deleted activitykind by id ${id}`);
       return deleted;
     },
     findById: async function (id) {
-      const [found] = await db.select().from(kinds).where(eq(kinds.id, id)).limit(1);
+      const [found] = await db
+        .select()
+        .from(kinds)
+        .where(eq(kinds.id, id))
+        .limit(1);
       log.debug(found, `Found activitykind by id ${id}`);
       return found;
     },
@@ -30,7 +37,11 @@ export function getActivityKindsDAO(log) {
     },
     update: async function (id, data) {
       data.updatedAt = new Date();
-      const [updated] = await db.update(kinds).set(data).where(eq(kinds.id, id)).returning();
+      const [updated] = await db
+        .update(kinds)
+        .set(data)
+        .where(eq(kinds.id, id))
+        .returning();
       log.debug(updated, `Updated activitykind by id ${id}`);
       return updated;
     },
